@@ -9,9 +9,8 @@ jobs:
   finish:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo
-        run: echo Done
-      - name: vars
-        run: echo "GITHUB_SHA=${GITHUB_SHA} GITHUB_REF=${GITHUB_REF} GITHUB_HEAD_REF=${GITHUB_HEAD_REF} GITHUB_BASE_REF~${GITHUB_BASE_REF}"
-      - name: env
-        run: env
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - run: git branch
+      - run: env
