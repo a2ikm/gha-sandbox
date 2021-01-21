@@ -1,0 +1,10 @@
+on:
+  check_suite:
+    types: [ completed ]
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify
+      run: echo Done
