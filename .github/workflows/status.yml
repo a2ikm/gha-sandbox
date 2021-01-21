@@ -1,0 +1,14 @@
+name: 'Check status data'
+on: status
+
+env:
+  THE_GITHUB_CONTEXT: ${{ toJson(github) }}
+
+jobs:
+  something:
+    name: 'some job'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print context
+        run: echo "Wow, such debugging ${{ toJson(github.event) }}"
