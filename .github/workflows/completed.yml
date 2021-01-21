@@ -1,7 +1,8 @@
 on:
   workflow_run:
     workflows:
-      - Ruby
+      - test1
+      - test2
     types: [ completed ]
 
 jobs:
