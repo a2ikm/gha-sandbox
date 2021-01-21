@@ -1,0 +1,12 @@
+on:
+  workflow_run:
+    workflows:
+      - Ruby
+    types: [ completed ]
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        run: echo Done
