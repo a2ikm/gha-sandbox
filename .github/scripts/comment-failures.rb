@@ -52,13 +52,25 @@ def generate_section(failed_runs)
 end
 
 def update_body(failed_runs, old_body)
-  old_body.split(SEPARATOR).map do |section|
+  old_sections = old_body.split(SEPARATOR)
+  old_sections.pop # pop signature
+
+  replaced = false
+  sections = old_sections.map do |section|
     if section.include?(TAG)
+      replaced = true
       generate_section(failed_runs)
     else
       section
     end
-  end.join(SEPARATOR)
+  end
+
+  unless replaced
+    sections << generate_section(failed_runs)
+  end
+
+  sections << SIGNATURE
+  sections.join(SEPARATOR)
 end
 
 def update_comment(number, failed_runs, comment)
