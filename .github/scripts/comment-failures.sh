@@ -13,13 +13,21 @@ get_existing_comment_url() {
 }
 
 create_comment() {
+  body=$(generate_body)
+  if [ -z "$body" ]; then
+    exit
+  fi
   curl -s -X POST -H "Authorization: token ${GH_API_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${number}/comments" \
-    -d "{\"body\":\"$(generate_body)\"}"
+    -d "{\"body\":\"$body\"}"
 }
 
 update_comment() {
+  body=$(generate_body)
+  if [ -z "$body" ]; then
+    exit
+  fi
   curl -s -X PATCH -H "Authorization: token ${GH_API_TOKEN}" "$comment_url" \
-    -d "{\"body\":\"$(generate_body)\"}"
+    -d "{\"body\":\"$body\"}"
 }
 
 get_failed_check_runs() {
@@ -30,7 +38,7 @@ get_failed_check_runs() {
 generate_body() {
   failed_check_runs=$(get_failed_check_runs)
   if [ -z "$failed_check_runs" ]; then
-    exit 1
+    exit
   fi
 
   echo "<!-- BEGIN ${GH_WORKFLOW} -->"
@@ -47,7 +55,7 @@ generate_body() {
 
 if [ -z "${GH_HEAD_BRANCH}" ]; then
   echo "Invoked without pull request"
-  exit 1
+  exit
 fi
 
 script_name=$(basename "$0")
@@ -56,7 +64,7 @@ signature="commented by $script_name"
 number=$(get_number)
 if [ -z "$number" ]; then
   echo "pull request not found with '${GH_HEAD_BRANCH}' branch"
-  exit 1
+  exit
 fi
 
 comment_url=$(get_existing_comment_url)
