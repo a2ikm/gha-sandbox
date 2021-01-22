@@ -17,5 +17,9 @@ jobs:
       GH_CHECK_SUITE_ID: ${{ github.event.workflow_run.check_suite_id }}
     steps:
       - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.0
+          bundler-cache: true
       - run: echo '${{ toJSON(github.event) }}'
-      - run: bash .github/scripts/comment-failures.sh
+      - run: ruby .github/scripts/comment-failures.rb
