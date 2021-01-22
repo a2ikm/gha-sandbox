@@ -6,7 +6,7 @@ on:
     types: [ completed ]
 
 jobs:
-  finish:
+  comment-failures:
     runs-on: ubuntu-latest
     env:
       A2IKM_GITHUB_API_TOKEN: ${{secrets.A2IKM_GITHUB_API_TOKEN}}
