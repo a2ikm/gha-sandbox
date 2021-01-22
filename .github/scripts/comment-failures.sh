@@ -22,7 +22,7 @@ update_comment() {
 
 get_failed_check_runs() {
   curl -s -H "Authorization: token ${GH_API_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/check-suites/${GH_CHECK_SUITE_ID}/check-runs" \
-    | jq --raw-output ".check_runs[] | select (.status == \"completed\" and .conclusion == \"failure\") | \".output.title\t.html_url\""
+    | jq --raw-output ".check_runs[] | select (.status == \"completed\" and .conclusion == \"failure\") | \"\(.output.title)\t\(.html_url)\""
 }
 
 generate_body() {
