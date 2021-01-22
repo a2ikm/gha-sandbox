@@ -47,7 +47,7 @@ generate_body() {
 
 if [ -z "${GH_HEAD_BRANCH}" ]; then
   echo "Invoked without pull request"
-  exit;
+  exit 1
 fi
 
 script_name=$(basename "$0")
@@ -56,7 +56,7 @@ signature="commented by $script_name"
 number=$(get_number)
 if [ -z "$number" ]; then
   echo "pull request not found with '${GH_HEAD_BRANCH}' branch"
-  exit
+  exit 1
 fi
 
 comment_url=$(get_existing_comment_url)
