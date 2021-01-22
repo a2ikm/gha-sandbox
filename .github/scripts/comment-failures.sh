@@ -20,7 +20,7 @@ create_comment() {
 }
 
 update_comment() {
-  curl -X PATCH -H "Authorization: token ${A2IKM_GITHUB_API_TOKEN}" "$comment_url" \
+  curl -s -X PATCH -H "Authorization: token ${A2IKM_GITHUB_API_TOKEN}" "$comment_url" \
     -d "{\"body\":\"$(date)\n\n$signature\"}"
 }
 
