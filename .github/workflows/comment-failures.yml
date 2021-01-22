@@ -11,12 +11,11 @@ jobs:
   comment-failures:
     runs-on: ubuntu-latest
     env:
-      A2IKM_GITHUB_API_TOKEN: ${{secrets.A2IKM_GITHUB_API_TOKEN}}
+      GH_API_TOKEN: ${{ secrets.A2IKM_GITHUB_API_TOKEN }}
+      GH_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+      GH_WORKFLOW: ${{ github.event.workflow.name }}
+      GH_CHECK_SUITE_ID: ${{ github.event.wofkflow_run.check_suite_id }}
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - run: git branch
-      - run: env
       - run: echo '${{ toJSON(github.event) }}'
       - run: bash .github/scripts/comment-failures.sh
