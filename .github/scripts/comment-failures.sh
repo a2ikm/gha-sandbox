@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -ex
+
 get_number() {
   curl -s -H "Authorization: token ${GH_API_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls" \
     | jq ".[] | select (.head.ref == \"${GH_HEAD_BRANCH}\") | .number"
