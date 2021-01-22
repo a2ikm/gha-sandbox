@@ -25,7 +25,7 @@ update_comment() {
 }
 
 script_name=$(basename "$0")
-signature="failures for ${GITHUB_SHA}\ncommented by $script_name"
+signature="commented by $script_name"
 
 number=$(get_number)
 if [ -z "$number" ]; then
