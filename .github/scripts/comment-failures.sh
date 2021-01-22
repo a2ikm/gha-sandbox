@@ -30,7 +30,7 @@ get_failed_check_runs() {
 generate_body() {
   failed_check_runs=$(get_failed_check_runs)
   if [ -z "$failed_check_runs" ]; then
-    exit
+    exit 1
   fi
 
   echo "<!-- BEGIN ${GH_WORKFLOW} -->"
