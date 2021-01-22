@@ -5,6 +5,8 @@ on:
       - test2
     types: [ completed ]
 
+name: comment-failures
+
 jobs:
   comment-failures:
     runs-on: ubuntu-latest
