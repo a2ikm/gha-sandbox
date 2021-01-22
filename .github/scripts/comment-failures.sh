@@ -7,13 +7,13 @@ get_number() {
     | jq ".[] | select (.head.ref == \"${GH_HEAD_BRANCH}\") | .number"
 }
 
-get_existing_comment_url() {
+get_existing_comment() {
   curl -s -H "Authorization: token ${GH_API_TOKEN}" "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/issues/${number}/comments" \
-    | jq --raw-output ".[] | select (.body | contains(\"$signature\")) | .url"
+    | jq --raw-output ".[] | select (.body | contains(\"$signature\"))"
 }
 
 create_comment() {
-  body=$(generate_body)
+  local body=$(update_body "")
   if [ -z "$body" ]; then
     exit
   fi
@@ -22,11 +22,14 @@ create_comment() {
 }
 
 update_comment() {
-  body=$(generate_body)
+  local url=$(echo $comment | jq ".url")
+  local body=$(echo $comment | jq ".body")
+
+  body=$(update_body $body)
   if [ -z "$body" ]; then
     exit
   fi
-  curl -s -X PATCH -H "Authorization: token ${GH_API_TOKEN}" "$comment_url" \
+  curl -s -X PATCH -H "Authorization: token ${GH_API_TOKEN}" "$url" \
     -d "{\"body\":\"$body\"}"
 }
 
@@ -35,7 +38,8 @@ get_failed_check_runs() {
     | jq --raw-output ".check_runs[] | select (.status == \"completed\" and .conclusion == \"failure\") | \"\(.output.title)\t\(.html_url)\""
 }
 
-generate_body() {
+update_body() {
+  local body=$1
   failed_check_runs=$(get_failed_check_runs)
   if [ -z "$failed_check_runs" ]; then
     exit
@@ -67,8 +71,8 @@ if [ -z "$number" ]; then
   exit
 fi
 
-comment_url=$(get_existing_comment_url)
-if [ -n "$comment_url" ]; then
+comment=$(get_existing_comment)
+if [ -n "$comment" ]; then
   update_comment
 else
   create_comment
