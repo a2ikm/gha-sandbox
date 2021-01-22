@@ -63,7 +63,7 @@ end
 
 def update_comment(number, failed_runs, comment)
   body = update_body(failed_runs, comment[:body])
-  CLIENT.update_comment(GITHUB_REPOSITORY, comment[:number], body)
+  CLIENT.update_comment(GITHUB_REPOSITORY, comment[:id], body)
 end
 
 def create_body(failed_runs)
