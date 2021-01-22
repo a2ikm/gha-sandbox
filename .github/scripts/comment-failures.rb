@@ -23,7 +23,7 @@ SEPARATOR = "\n<!-- SEPARATOR -->\n"
 TAG       = "<!-- WORKFLOW:#{GH_WORKFLOW} -->\n"
 
 def find_failed_check_runs
-  CLIENT.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID)[:check_runs].select do |run|
+  CLIENT.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID, accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
     run[:status] == "completed" && run[:conclusion] == "failure"
   end
 end
