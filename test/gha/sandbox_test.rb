@@ -6,6 +6,6 @@ class Gha::SandboxTest < Minitest::Test
   end
 
   def test_it_does_something_useful
-    assert RUBY_VERSION >= "2.5"
+    assert RUBY_VERSION >= "2.6"
   end
 end
