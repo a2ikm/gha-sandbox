@@ -52,8 +52,8 @@ class CommentFailures
   end
 
   def find_failed_check_runs
-    @client.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID, accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
-      run[:status] == "completed" && run[:conclusion] == "failure"
+    @client.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID, status: "completed", accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
+      run[:conclusion] == "failure"
     end
   end
 
