@@ -59,7 +59,7 @@ end
 
 def update_body(failed_runs, old_body)
   old_sections = old_body.split(SEPARATOR)
-  old_sections.shift # remove signature
+  old_sections.reject! { |section| section.include?(SIGNATURE) }
 
   replaced = false
   sections = old_sections.map do |section|
