@@ -3,6 +3,7 @@ on:
     workflows:
       - test1
       - test2
+      - test3
     types: [ completed ]
 
 name: comment-failures
