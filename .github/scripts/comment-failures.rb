@@ -41,11 +41,16 @@ def generate_section(failed_runs)
 
   buffer << TAG
   buffer << "### #{GH_WORKFLOW}\n"
-  buffer << "| job | url |\n"
-  buffer << "|-----|-----|\n"
 
-  failed_runs.each do |run|
-    buffer << "| #{run[:output][:title]} | #{run[:html_url]}\n"
+  if failed_runs.empty?
+    buffer << "No failed jobs :+1:"
+  else
+    buffer << "| job | url |\n"
+    buffer << "|-----|-----|\n"
+
+    failed_runs.each do |run|
+      buffer << "| #{run[:output][:title]} | #{run[:html_url]}\n"
+    end
   end
 
   buffer
@@ -95,12 +100,6 @@ if GH_HEAD_BRANCH.nil? || GH_HEAD_BRANCH.empty?
   exit
 end
 
-failed_runs = find_failed_check_runs
-if failed_runs.empty?
-  puts "All jobs passed"
-  exit
-end
-
 pr = find_pull_request
 if pr.nil?
   puts "No open pull request found with `#{GH_HEAD_BRANCH}` branch"
@@ -108,6 +107,8 @@ if pr.nil?
 end
 
 number = pr[:number]
+
+failed_runs = find_failed_check_runs
 
 if comment = find_comment(number)
   update_comment(number, failed_runs, comment)
