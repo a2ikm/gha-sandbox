@@ -7,12 +7,12 @@ gemfile do
   gem "octokit"
 end
 
-GITHUB_REPOSITORY = ENV["GITHUB_REPOSITORY"]
-GH_API_TOKEN      = ENV["GH_API_TOKEN"]
-GH_CHECK_SUITE_ID = ENV["GH_CHECK_SUITE_ID"]
-GH_HEAD_BRANCH    = ENV["GH_HEAD_BRANCH"]
-GH_HEAD_COMMIT    = ENV["GH_HEAD_COMMIT"]
-GH_WORKFLOW       = ENV["GH_WORKFLOW"]
+GITHUB_REPOSITORY = ENV["GITHUB_REPOSITORY"]  # repository name. i.e., rails/rails
+GH_API_TOKEN      = ENV["GH_API_TOKEN"]       # GitHub API Token
+GH_CHECK_SUITE_ID = ENV["GH_CHECK_SUITE_ID"]  # id of check suite event which the workflow triggered, derived from github.event.workflow_run.check_suite_id
+GH_HEAD_BRANCH    = ENV["GH_HEAD_BRANCH"]     # branch name where the workflow ran, derived from github.event.workflow_run.head_branch
+GH_HEAD_COMMIT    = ENV["GH_HEAD_COMMIT"]     # commit hash where the workflow ran, derived from github.event.workflow_run.head_commit.id
+GH_WORKFLOW       = ENV["GH_WORKFLOW"]        # name of the workflow, derived from github.event.workflow.name
 
 CLIENT = Octokit::Client.new(access_token: GH_API_TOKEN).tap do |client|
   client.auto_paginate = true
