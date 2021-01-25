@@ -28,12 +28,13 @@ def find_failed_check_runs
   end
 end
 
-def find_pull_request
-  CLIENT.pull_requests(GITHUB_REPOSITORY).find { |pr| pr[:head][:ref] == GH_HEAD_BRANCH && pr[:state] == "open" }
+def find_pull_requests
+  branch = GITHUB_REPOSITORY.split("/").first + ":" + GH_HEAD_BRANCH
+  CLIENT.pull_requests(GITHUB_REPOSITORY, state: "open", head: branch).map { |pr| pr[:number] }
 end
 
-def find_comment(number)
-  CLIENT.issue_comments(GITHUB_REPOSITORY, number).find { |c| c[:body].include?(SIGNATURE) }
+def find_comment(pr)
+  CLIENT.issue_comments(GITHUB_REPOSITORY, pr).find { |c| c[:body].include?(SIGNATURE) }
 end
 
 def generate_section(failed_runs)
@@ -77,7 +78,7 @@ def update_body(failed_runs, old_body)
   ([SIGNATURE] + sections).join(SEPARATOR)
 end
 
-def update_comment(number, failed_runs, comment)
+def update_comment(pr, failed_runs, comment)
   body = update_body(failed_runs, comment[:body])
   CLIENT.update_comment(GITHUB_REPOSITORY, comment[:id], body)
 end
@@ -89,9 +90,9 @@ def create_body(failed_runs)
   ].join("\n<!-- SEPARATOR -->\n")
 end
 
-def create_comment(number, failed_runs)
+def create_comment(pr, failed_runs)
   body = create_body(failed_runs)
-  CLIENT.add_comment(GITHUB_REPOSITORY, number, body)
+  CLIENT.add_comment(GITHUB_REPOSITORY, pr, body)
 end
 
 if GH_HEAD_BRANCH.nil? || GH_HEAD_BRANCH.empty?
@@ -99,20 +100,20 @@ if GH_HEAD_BRANCH.nil? || GH_HEAD_BRANCH.empty?
   exit
 end
 
-pr = find_pull_request
-if pr.nil?
+prs = find_pull_requests
+if prs.empty?
   puts "No open pull request found with `#{GH_HEAD_BRANCH}` branch"
   exit
 end
 
-number = pr[:number]
+prs.each do |pr|
+  failed_runs = find_failed_check_runs
 
-failed_runs = find_failed_check_runs
-
-if comment = find_comment(number)
-  update_comment(number, failed_runs, comment)
-  puts "Updated comment"
-else
-  create_comment(number, failed_runs)
-  puts "Created comment"
+  if comment = find_comment(pr)
+    update_comment(pr, failed_runs, comment)
+    puts "Updated comment"
+  else
+    create_comment(pr, failed_runs)
+    puts "Created comment"
+  end
 end
