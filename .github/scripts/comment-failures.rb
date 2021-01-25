@@ -94,7 +94,7 @@ class CommentFailures
       buffer << "|-----|-----|\n"
 
       failed_runs.each do |run|
-        buffer << "| #{run[:output][:title]} | #{run[:html_url]}\n"
+        buffer << "| #{run[:output][:title]} | #{run[:html_url]} |\n"
       end
     end
 
