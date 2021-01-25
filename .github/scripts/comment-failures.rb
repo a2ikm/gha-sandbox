@@ -58,8 +58,8 @@ class CommentFailures
   end
 
   def find_pull_requests
-    branch = GITHUB_REPOSITORY.split("/").first + ":" + GH_HEAD_BRANCH
-    client.pull_requests(GITHUB_REPOSITORY, state: "open", head: branch)
+    user_or_org = GITHUB_REPOSITORY.split("/").first # expect only internal pull requests
+    client.pull_requests(GITHUB_REPOSITORY, state: "open", head: "#{user_or_org}:#{GH_HEAD_BRANCH}")
   end
 
   def find_comment(pr)
