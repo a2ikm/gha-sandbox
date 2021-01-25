@@ -8,7 +8,6 @@ gemfile do
 end
 
 class CommentFailures
-
   GITHUB_REPOSITORY = ENV["GITHUB_REPOSITORY"]  # repository name. i.e., rails/rails
   GH_API_TOKEN      = ENV["GH_API_TOKEN"]       # GitHub API Token
   GH_CHECK_SUITE_ID = ENV["GH_CHECK_SUITE_ID"]  # id of check suite event which the workflow triggered, derived from github.event.workflow_run.check_suite_id
