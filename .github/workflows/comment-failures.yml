@@ -12,11 +12,11 @@ jobs:
   comment-failures:
     runs-on: ubuntu-latest
     env:
-      GH_API_TOKEN: ${{ secrets.A2IKM_GITHUB_API_TOKEN }}
-      GH_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
-      GH_HEAD_COMMIT: ${{ github.event.workflow_run.head_commit.id }}
-      GH_WORKFLOW: ${{ github.event.workflow.name }}
-      GH_CHECK_SUITE_ID: ${{ github.event.workflow_run.check_suite_id }}
+      API_TOKEN: ${{ secrets.A2IKM_GITHUB_API_TOKEN }}
+      HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+      HEAD_COMMIT: ${{ github.event.workflow_run.head_commit.id }}
+      WORKFLOW: ${{ github.event.workflow.name }}
+      CHECK_SUITE_ID: ${{ github.event.workflow_run.check_suite_id }}
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
