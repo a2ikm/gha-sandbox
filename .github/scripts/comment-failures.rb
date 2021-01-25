@@ -44,7 +44,7 @@ def generate_section(failed_runs)
   buffer << "### #{GH_WORKFLOW}\n"
 
   if failed_runs.empty?
-    buffer << "No failed jobs :+1:"
+    buffer << "No jobs failed :+1:"
   else
     buffer << "| job | url |\n"
     buffer << "|-----|-----|\n"
