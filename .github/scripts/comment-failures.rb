@@ -86,12 +86,10 @@ class CommentFailures
     buffer
   end
 
-  def update_body(failed_runs, old_body)
-    old_sections = old_body.split(SEPARATOR)
-    old_sections.reject! { |section| section.include?(SIGNATURE) }
-
+  def update_body(failed_runs, body)
     replaced = false
-    sections = old_sections.map do |section|
+
+    sections = split_body(body).map do |section|
       if section.include?(TAG)
         replaced = true
         generate_section(failed_runs)
@@ -104,7 +102,7 @@ class CommentFailures
       sections << generate_section(failed_runs)
     end
 
-    ([SIGNATURE] + sections).join(SEPARATOR)
+    generate_body(sections)
   end
 
   def update_comment(pr, failed_runs, comment)
@@ -113,15 +111,21 @@ class CommentFailures
   end
 
   def create_body(failed_runs)
-    [
-      generate_section(failed_runs),
-      SIGNATURE,
-    ].join("\n<!-- SEPARATOR -->\n")
+    section = generate_section(failed_runs)
+    generate_body([section])
   end
 
   def create_comment(pr, failed_runs)
     body = create_body(failed_runs)
     @client.add_comment(GITHUB_REPOSITORY, pr, body)
+  end
+
+  def generate_body(sections)
+    ([SIGNATURE] + sections).join(SEPARATOR)
+  end
+
+  def split_body(body)
+    body.split(SEPARATOR).reject { |section| section.include?(SIGNATURE) }
   end
 end
 
