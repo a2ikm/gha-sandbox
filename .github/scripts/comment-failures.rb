@@ -36,7 +36,7 @@ class CommentFailures
       failed_runs = find_failed_check_runs
 
       if comment = find_comment(pr)
-        update_comment(pr, failed_runs, comment)
+        update_comment(failed_runs, comment)
         puts "Updated comment"
       else
         create_comment(pr, failed_runs)
@@ -52,18 +52,34 @@ class CommentFailures
   end
 
   def find_failed_check_runs
-    @client.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID, status: "completed", accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
+    client.check_runs_for_check_suite(GITHUB_REPOSITORY, GH_CHECK_SUITE_ID, status: "completed", accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
       run[:conclusion] == "failure"
     end
   end
 
   def find_pull_requests
     branch = GITHUB_REPOSITORY.split("/").first + ":" + GH_HEAD_BRANCH
-    @client.pull_requests(GITHUB_REPOSITORY, state: "open", head: branch).map { |pr| pr[:number] }
+    client.pull_requests(GITHUB_REPOSITORY, state: "open", head: branch)
   end
 
   def find_comment(pr)
-    @client.issue_comments(GITHUB_REPOSITORY, pr).find { |c| c[:body].include?(SIGNATURE) }
+    client.issue_comments(GITHUB_REPOSITORY, pr[:number]).find { |c| c[:body].include?(SIGNATURE) }
+  end
+
+  def update_comment(failed_runs, comment)
+    section = generate_section(failed_runs)
+    old_sections = split_body(comment[:body])
+    new_sections = replace_or_append_section(section, old_sections)
+    body = generate_body(new_sections)
+
+    client.update_comment(GITHUB_REPOSITORY, comment[:id], body)
+  end
+
+  def create_comment(pr, failed_runs)
+    section = generate_section(failed_runs)
+    body = generate_body([section])
+
+    client.add_comment(GITHUB_REPOSITORY, pr[:number], body)
   end
 
   def generate_section(failed_runs)
@@ -86,38 +102,23 @@ class CommentFailures
     buffer
   end
 
-  def update_body(failed_runs, body)
+  def replace_or_append_section(section, old_sections)
     replaced = false
 
-    sections = split_body(body).map do |section|
-      if section.include?(TAG)
+    new_sections = old_sections.map do |old_section|
+      if old_section.include?(TAG)
         replaced = true
-        generate_section(failed_runs)
-      else
         section
+      else
+        old_section
       end
     end
 
     unless replaced
-      sections << generate_section(failed_runs)
+      new_sections << section
     end
 
-    generate_body(sections)
-  end
-
-  def update_comment(pr, failed_runs, comment)
-    body = update_body(failed_runs, comment[:body])
-    @client.update_comment(GITHUB_REPOSITORY, comment[:id], body)
-  end
-
-  def create_body(failed_runs)
-    section = generate_section(failed_runs)
-    generate_body([section])
-  end
-
-  def create_comment(pr, failed_runs)
-    body = create_body(failed_runs)
-    @client.add_comment(GITHUB_REPOSITORY, pr, body)
+    new_sections
   end
 
   def generate_body(sections)
