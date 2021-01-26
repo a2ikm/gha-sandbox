@@ -22,5 +22,5 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.0.0
-          bundler: none
+          bundler-cache: true
       - run: ruby .github/scripts/comment-failures.rb
