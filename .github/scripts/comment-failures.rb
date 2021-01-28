@@ -4,7 +4,7 @@ require "bundler/inline"
 
 gemfile do
   source "https://rubygems.org"
-  gem "octokit"
+  gem "octokit", git: "https://github.com/a2ikm/octokit.rb.git", branch: "paginate-checks"
 end
 
 class CommentFailures
@@ -52,7 +52,7 @@ class CommentFailures
   end
 
   def find_failed_check_runs
-    client.check_runs_for_check_suite(REPOSITORY, CHECK_SUITE_ID, status: "completed", accept: "application/vnd.github.v3+json")[:check_runs].select do |run|
+    client.check_runs_for_check_suite(REPOSITORY, CHECK_SUITE_ID, status: "completed", accept: "application/vnd.github.v3+json", per_page: 1)[:check_runs].select do |run|
       run[:conclusion] == "failure"
     end
   end
